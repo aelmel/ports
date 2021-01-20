@@ -1,0 +1,43 @@
+syntax = "proto3";
+package pb;
+
+service PortService {
+  rpc Add(InsertPortRequest) returns (InsertPortResponse) {}
+  rpc GetPort(GetPortRequest) returns (GetPortResponse) {}
+
+}
+
+message InsertPortRequest {
+  Port port = 1;
+}
+
+message InsertPortResponse {
+  int32 status = 1;
+}
+
+message GetPortRequest {
+  string key = 1;
+}
+
+message GetPortResponse {
+  int32 status = 1;
+  Details details = 2;
+}
+
+message Port {
+  string key = 1;
+  Details details = 2;
+}
+
+message Details {
+  string name = 1;
+  string city = 2;
+  string country = 3;
+  repeated string alias = 4;
+  repeated string regions = 5;
+  repeated float coordinates = 6;
+  string province = 7;
+  string timezone = 8;
+  repeated string unlocs = 9;
+  string code = 10;
+}
