@@ -6,6 +6,7 @@ import (
 	"github.com/aelmel/ports-infra/port_domain_service/internal/domain"
 	"github.com/aelmel/ports-infra/port_domain_service/internal/repository"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	mongodb "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -34,12 +35,36 @@ func NewRepo(configuration Configuration) (repository.Repository, error) {
 	}, nil
 }
 
-func (m mongo) InsertPort(ctx context.Context, port domain.Port) error {
-	panic("implement me")
+func (m mongo) InsertorUpdatePort(ctx context.Context, port domain.Port) error {
+	pByte, err := bson.Marshal(port)
+	if err != nil {
+		return err
+	}
+	var update bson.M
+	err = bson.Unmarshal(pByte, &update)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"key": port.Key}
+	findOptions := options.Update()
+	findOptions.SetUpsert(true)
+	_, err = m.collection.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: update}}, findOptions)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (m mongo) GetPort(ctx context.Context, portKey string) (domain.Port, error) {
-	panic("implement me")
+	var port domain.Port
+	err := m.collection.FindOne(ctx, bson.M{"key": portKey}).Decode(&port)
+	if err != nil {
+		return domain.Port{}, err
+	}
+
+	return port, nil
 }
 
 func (m mongo) Close() {

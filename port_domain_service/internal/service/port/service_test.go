@@ -41,7 +41,7 @@ func TestGrpcPortService_GetPort(t *testing.T) {
 func TestGrpcPortService_Add(t *testing.T) {
 	repoMock := mocks.Repository{}
 
-	repoMock.On("InsertPort", mock.Anything, mock.AnythingOfType("domain.Port")).Return(nil)
+	repoMock.On("InsertorUpdatePort", mock.Anything, mock.AnythingOfType("domain.Port")).Return(nil)
 	svc := grpcPortService{repo: &repoMock}
 	ctx := context.Background()
 	resp, err := svc.Add(ctx, &pb.InsertPortRequest{Port: &pb.Port{

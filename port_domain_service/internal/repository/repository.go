@@ -6,7 +6,7 @@ import (
 )
 
 type Repository interface {
-	InsertPort(ctx context.Context, port domain.Port) error
+	InsertorUpdatePort(ctx context.Context, port domain.Port) error
 	GetPort(ctx context.Context, portKey string) (domain.Port, error)
 	Close()
 }

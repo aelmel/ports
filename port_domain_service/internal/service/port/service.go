@@ -41,7 +41,7 @@ func (g grpcPortService) Add(ctx context.Context, request *pb.InsertPortRequest)
 		Unlocs:      request.Port.Details.Unlocs,
 		Code:        request.Port.Details.Code,
 	}
-	err := g.repo.InsertPort(ctx, bsonPort)
+	err := g.repo.InsertorUpdatePort(ctx, bsonPort)
 	if err != nil {
 		return &pb.InsertPortResponse{Status: 1}, nil
 	}

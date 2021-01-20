@@ -41,7 +41,7 @@ func (_m *Repository) GetPort(ctx context.Context, portKey string) (domain.Port,
 }
 
 // InsertPort provides a mock function with given fields: ctx, port
-func (_m *Repository) InsertPort(ctx context.Context, port domain.Port) error {
+func (_m *Repository) InsertorUpdatePort(ctx context.Context, port domain.Port) error {
 	ret := _m.Called(ctx, port)
 
 	var r0 error
