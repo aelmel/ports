@@ -29,7 +29,7 @@ func NewParser(client port.Client, basepath string) Parser {
 
 func (p parser) Monitor() {
 	for {
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Minute)
 		log.Info("Checking ", p.basepath)
 		files, err := ioutil.ReadDir(p.basepath)
 		if err != nil {
