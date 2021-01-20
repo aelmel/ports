@@ -3,9 +3,11 @@ package port
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/aelmel/ports-infra/port_domain_service/internal/domain"
 	pb "github.com/aelmel/ports-infra/port_domain_service/internal/proto"
 	"github.com/aelmel/ports-infra/port_domain_service/internal/repository"
+	log "github.com/sirupsen/logrus"
 )
 
 type Service interface {
@@ -23,10 +25,11 @@ func NewGrpcPortSvc(repo repository.Repository) pb.PortServiceServer {
 	}
 }
 
-
 func (g grpcPortService) Add(ctx context.Context, request *pb.InsertPortRequest) (*pb.InsertPortResponse, error) {
+	log.Info(fmt.Sprintf("Add port key %s", request.Port.Key))
+
 	if request.Port == nil {
-		return nil, errors.New("Didn't receive port")
+		return nil, errors.New("didn't receive port")
 	}
 	bsonPort := domain.Port{
 		Key:         request.Port.Key,
@@ -49,6 +52,7 @@ func (g grpcPortService) Add(ctx context.Context, request *pb.InsertPortRequest)
 }
 
 func (g grpcPortService) GetPort(ctx context.Context, request *pb.GetPortRequest) (*pb.GetPortResponse, error) {
+	log.Info(fmt.Sprintf("Get details for key %s", request.Key))
 	details, err := g.repo.GetPort(ctx, request.Key)
 	if err != nil {
 		return nil, err
@@ -67,4 +71,3 @@ func (g grpcPortService) GetPort(ctx context.Context, request *pb.GetPortRequest
 		Code:        details.Code,
 	}}, nil
 }
-
