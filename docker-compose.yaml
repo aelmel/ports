@@ -1,0 +1,59 @@
+version: "3.2"
+volumes:
+  mongodb_data_container: {}
+  client_api: {}
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: ports
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  port_domain_svc:
+    build: ./port_domain_service
+    depends_on:
+      - mongodb
+    ports:
+      - "50051:50051"
+    links:
+      - mongodb
+    environment:
+      - MONGO_HOST=mongodb
+      - MONGO_USERNAME=port-user
+      - MONGO_PWD=port-password
+      - MONGO_DATABASE=ports
+      - MONGO_COLLECTION=details
+    restart: always
+    logging:
+      # limit logs retained on host to 50MB
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+  client_api:
+    build: ./client_api
+    depends_on:
+      - port_domain_svc
+    ports:
+      - "8000:8000"
+    links:
+      - port_domain_svc
+    environment:
+      - PORT_GRPC_HOST=port_domain_svc
+      - PORT_GRPC_ADDR=50051
+      - FILE_PATH=/tmp
+      - HTTP_PORT=:8000
+    volumes:
+      - "client_api:/tmp"
+    restart: always
+    logging:
+      # limit logs retained on host to 50MB
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
