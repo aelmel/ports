@@ -16,7 +16,7 @@ type mongo struct {
 }
 
 func NewRepo(configuration Configuration) (repository.Repository, error) {
-	clientOptions := options.Client().ApplyURI(fmt.Sprintf("mongo://%s:%s", configuration.Host, configuration.Port)).SetAuth(options.Credential{
+	clientOptions := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s", configuration.Host, configuration.Port)).SetAuth(options.Credential{
 		AuthSource: configuration.Database,
 		Username:   configuration.Username,
 		Password:   configuration.Password,
