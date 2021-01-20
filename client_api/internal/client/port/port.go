@@ -21,14 +21,13 @@ type grpcClient struct {
 	client pb.PortServiceClient
 }
 
-func GrpcClient(host, port string) (Client, error) {
+func NewGrpcClient(host, port string) (Client, error) {
 	opts := grpc.WithInsecure()
 	cc, err := grpc.Dial(fmt.Sprintf("%s:%s", host, port), opts)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
-	defer cc.Close()
 	client := pb.NewPortServiceClient(cc)
 
 	return &grpcClient{cc: cc, client: client}, nil
