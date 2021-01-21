@@ -39,7 +39,6 @@ func main() {
 	go func() {
 		c := make(chan os.Signal)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		client.Close()
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 

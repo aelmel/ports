@@ -12,7 +12,7 @@ import (
 
 func NewHTTPHandler(client port.Client) http.Handler {
 	r := mux.NewRouter()
-	r.HandleFunc("/port/{key}/", PortHandler(client))
+	r.HandleFunc("/port/{key}", PortHandler(client))
 	return r
 }
 
@@ -24,11 +24,14 @@ func PortHandler(client port.Client) func(http.ResponseWriter, *http.Request) {
 
 		portDetails, err := client.GetPort(context.Background(), portKey)
 		if err != nil {
+			log.Warn("error received ", err)
 			writer.WriteHeader(http.StatusNotFound)
+			return
 		}
 		port, err := json.Marshal(portDetails)
 		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		writer.Write(port)

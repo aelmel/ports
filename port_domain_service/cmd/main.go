@@ -48,6 +48,7 @@ func main() {
 			return
 		}
 		handler := port.NewGrpcPortSvc(repo)
+		//credential := credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})
 		grpcServer := grpc.NewServer()
 		pb.RegisterPortServiceServer(grpcServer, handler)
 		errChan <- grpcServer.Serve(listener)

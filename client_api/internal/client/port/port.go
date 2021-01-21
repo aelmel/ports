@@ -22,8 +22,7 @@ type grpcClient struct {
 }
 
 func NewGrpcClient(host, port string) (Client, error) {
-	opts := grpc.WithInsecure()
-	cc, err := grpc.Dial(fmt.Sprintf("%s:%s", host, port), opts)
+	cc, err := grpc.Dial(fmt.Sprintf("%s:%s", host, port), grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
 		return nil, err

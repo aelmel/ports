@@ -40,14 +40,13 @@ services:
     depends_on:
       - port_domain_svc
     ports:
-      - "8000:8000"
+      - "8008:8080"
     links:
       - port_domain_svc
     environment:
       - PORT_GRPC_HOST=port_domain_svc
       - PORT_GRPC_ADDR=50051
       - FILE_PATH=/tmp
-      - HTTP_PORT=:8000
     volumes:
       - "client_api:/tmp"
     restart: always

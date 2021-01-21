@@ -1,14 +1,19 @@
-FROM golang:alpine AS build
-RUN mkdir /go/src/port_domain_service
-ADD ./ /go/src/port_domain_service
-WORKDIR /go/src/port_domain_service
-RUN apk update && apk add --no-cache git && apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /main cmd/main.go
+FROM golang:alpine
+RUN apk add --update \
+    curl \
+    && rm -rf /var/cache/apk/*
+RUN mkdir /go/src/client-api
+WORKDIR /go/src/client-api
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+COPY . .
 
-FROM scratch AS runtime
-COPY --from=build /main /
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+RUN go build -o /main cmd/main.go
+
 EXPOSE 50051
 CMD ["/main"]
+
+
 
 
